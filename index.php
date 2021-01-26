@@ -22,4 +22,3 @@ require_once BASEPATH . DS . 'core' . DS . 'Model.php';
 
 // jalankan proses routing
 new Route();
-?>

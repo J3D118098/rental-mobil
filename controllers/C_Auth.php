@@ -1,12 +1,14 @@
-<?php 
+<?php
 
-if(!defined('BASEPATH')) echo "Tidak bisa langsung mengakses halaman ini!";
+if (!defined('BASEPATH')) echo "Tidak bisa langsung mengakses halaman ini!";
 
-class C_Auth extends Controller{
-	public function __construct(){
+class C_Auth extends Controller
+{
+	public function __construct()
+	{
 		$this->addFunction('url');
-		if(isset($_SESSION['login'])) {
-			header('Location: ' . base_url('dashboard'));
+		if (isset($_SESSION['login'])) {
+			header('Location: ' . base_url('index'));
 		}
 
 		$this->addFunction('web');
@@ -14,30 +16,33 @@ class C_Auth extends Controller{
 		$this->req = $this->library('Request');
 		$this->akun = $this->model('M_Akun');
 	}
-	
-	public function index(){
+
+	public function index()
+	{
 		$this->view('login');
 	}
 
-	public function login(){
-		if(!isset($_POST['login'])) redirect();
+	public function login()
+	{
+		if (!isset($_POST['login'])) redirect();
 		else {
 			$username = $this->req->post('username');
 			$password = $this->req->post('password');
 
 			$akun = $this->akun->cek_login($username);
-			
-			if($akun->num_rows > 0){
+
+			if ($akun->num_rows > 0) {
 				$akun = $akun->fetch_object();
-				if(password_verify($password, $akun->password)){
+				if (password_verify($password, $akun->password)) {
 					setSession('login', [
 						'auth' => true,
 						'nama' => $akun->nama,
 						'username' => $akun->username,
 						'foto' => $akun->foto,
-						'waktu' => date('d M Y H:i:s')
+						'waktu' => date('d M Y H:i:s'),
+						'level' => $akun->level
 					]);
-					redirect('dashboard');
+					redirect('index');
 				} else {
 					setSession('error', 'Password salah!');
 					redirect();
@@ -49,7 +54,8 @@ class C_Auth extends Controller{
 		}
 	}
 
-	public function logout(){
+	public function logout()
+	{
 		unset($_SESSION['login']);
 		redirect();
 	}

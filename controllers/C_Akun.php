@@ -1,20 +1,23 @@
-<?php 
+<?php
 
-class C_Akun extends Controller {
-	public function __construct(){
+class C_Akun extends Controller
+{
+	public function __construct()
+	{
 		$this->addFunction('url');
-		if(!isset($_SESSION['login'])) {
+		if (!isset($_SESSION['login'])) {
 			$_SESSION['error'] = 'Anda harus masuk dulu!';
 			header('Location: ' . base_url());
 		}
-		
+
 		$this->addFunction('web');
 		$this->addFunction('session');
 		$this->req = $this->library('Request');
 		$this->akun = $this->model('M_Akun');
 	}
 
-	public function index(){
+	public function index()
+	{
 		$data = [
 			'aktif' => 'akun',
 			'judul' => 'Data Akun',
@@ -24,10 +27,11 @@ class C_Akun extends Controller {
 		$this->view('akun/index', $data);
 	}
 
-	public function tambah(){
-		if(!isset($_POST['tambah'])) redirect('akun');
+	public function tambah()
+	{
+		if (!isset($_POST['tambah'])) redirect('akun');
 
-		if($_POST['password'] !== $_POST['password2']) {
+		if ($_POST['password'] !== $_POST['password2']) {
 			setSession('error', 'Password tidak sama!');
 			redirect('akun');
 		} else {
@@ -43,18 +47,19 @@ class C_Akun extends Controller {
 			$img_name = str_replace(' ', '-', $img_name);
 			$img_name = $img_name . '-' . time();
 
-			if($error == 0){
-				if(file_exists($upload_dir . $img_name . '.' . $ekstensi)) unlink($upload_dir . $img_name . '.' . $ekstensi);
-				
-				if(move_uploaded_file($asal, $upload_dir . $img_name . '.' . $ekstensi)){
+			if ($error == 0) {
+				if (file_exists($upload_dir . $img_name . '.' . $ekstensi)) unlink($upload_dir . $img_name . '.' . $ekstensi);
+
+				if (move_uploaded_file($asal, $upload_dir . $img_name . '.' . $ekstensi)) {
 					$data = [
 						'nama' => $this->req->post('nama'),
 						'username' => $this->req->post('username'),
 						'password' => password_hash($this->req->post('password'), PASSWORD_DEFAULT),
+						'level' => $this->req->post('level'),
 						'foto' => $img_name . '.' . $ekstensi,
 					];
 
-					if($this->akun->tambah($data)){
+					if ($this->akun->tambah($data)) {
 						setSession('success', 'Data berhasil ditambahkan!');
 						redirect('akun');
 					} else {
@@ -66,13 +71,14 @@ class C_Akun extends Controller {
 		}
 	}
 
-	public function hapus($id = null){
-		if(!isset($id) || $this->akun->cek($id)->num_rows == 0) redirect('akun');
+	public function hapus($id = null)
+	{
+		if (!isset($id) || $this->akun->cek($id)->num_rows == 0) redirect('akun');
 
 		$gambar	= $this->akun->detail($id)->fetch_object()->foto;
 
 		unlink(BASEPATH . DS . 'uploads' . DS . $gambar) or die('gagal hapus gambar!');
-		if($this->akun->hapus($id)){
+		if ($this->akun->hapus($id)) {
 			setSession('success', 'Data berhasil dihapus!');
 			redirect('akun');
 		} else {
@@ -81,8 +87,9 @@ class C_Akun extends Controller {
 		}
 	}
 
-	public function detail($id){
-		if(!isset($id) || $this->akun->cek($id)->num_rows == 0) redirect('akun');
+	public function detail($id)
+	{
+		if (!isset($id) || $this->akun->cek($id)->num_rows == 0) redirect('akun');
 
 		$data = [
 			'aktif' => 'akun',

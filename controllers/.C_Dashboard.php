@@ -1,9 +1,11 @@
-<?php 
+<?php
 
-class C_Dashboard extends Controller {
-	public function __construct(){
+class C_Dashboard extends Controller
+{
+	public function __construct()
+	{
 		$this->addFunction('url');
-		if(!isset($_SESSION['login'])) {
+		if (!isset($_SESSION['login'])) {
 			$_SESSION['error'] = 'Anda harus masuk dulu!';
 			header('Location: ' . base_url());
 		}
@@ -14,7 +16,8 @@ class C_Dashboard extends Controller {
 		$this->pesanan = $this->model('M_Pesanan');
 		$this->akun = $this->model('M_Akun');
 	}
-	public function index(){
+	public function index()
+	{
 		$data = [
 			'aktif' => 'dashboard',
 			'judul' => 'Dashboard',
@@ -23,6 +26,6 @@ class C_Dashboard extends Controller {
 			'pesanan' => $this->pesanan->lihat(),
 			'akun' => $this->akun->lihat(),
 		];
-		$this->view('dashboard', $data);
+		$this->view('index', $data);
 	}
 }
